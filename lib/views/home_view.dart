@@ -70,31 +70,34 @@ class _StudioYaiverseHomeState extends State<StudioYaiverseHome> {
         HomeScreen(username: _id!),
         HomeScreen(username: _id!),
       ];
-      return Scaffold(
-        body: homeContents.elementAt(homeIdx),
-        bottomNavigationBar: BottomNavigationBar(
-          // selectedFontSize: 12.0,
-          // unselectedFontSize: 12.0,
-          type: BottomNavigationBarType.fixed,
-          onTap: onClickTab,
-          currentIndex: homeIdx,
-          showUnselectedLabels: true,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black45,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_box),
-              label: 'Get 3D',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.view_in_ar),
-              label: 'AR',
-            ),
-          ],
+      return GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: homeContents.elementAt(homeIdx),
+          bottomNavigationBar: BottomNavigationBar(
+            // selectedFontSize: 12.0,
+            // unselectedFontSize: 12.0,
+            type: BottomNavigationBarType.fixed,
+            onTap: onClickTab,
+            currentIndex: homeIdx,
+            showUnselectedLabels: true,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.black45,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_box),
+                label: 'Get 3D',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.view_in_ar),
+                label: 'AR',
+              ),
+            ],
+          ),
         ),
       );
     }

@@ -1,16 +1,19 @@
+import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
+import 'package:ar_flutter_plugin/models/ar_anchor.dart';
+import 'package:flutter/material.dart';
 import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
-import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/datatypes/node_types.dart';
-import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
-import 'package:ar_flutter_plugin/models/ar_anchor.dart';
-import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
+import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
-import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math_64.dart' as v64;
+import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
+import 'package:studio_yaiverse_mobile/models/3d_model.dart';
+import 'package:studio_yaiverse_mobile/services/api_service.dart';
+import 'package:vector_math/vector_math_64.dart';
+//import 'dart:math';
 
 class ObjectGesturesWidget extends StatefulWidget {
   const ObjectGesturesWidget({Key? key}) : super(key: key);
@@ -19,6 +22,9 @@ class ObjectGesturesWidget extends StatefulWidget {
 }
 
 class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
+  int selected_idx = 0;
+  Future<List<ThreeDModel>> threedmodels = ApiService.getThreeDModels();
+
   ARSessionManager? arSessionManager;
   ARObjectManager? arObjectManager;
   ARAnchorManager? arAnchorManager;
@@ -44,16 +50,36 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
             onARViewCreated: onARViewCreated,
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
-          Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: onRemoveEverything,
-                      child: const Text("Remove Everything")),
-                ]),
-          )
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * .1,
+              width: MediaQuery.of(context).size.width,
+              child: FutureBuilder(
+                future: threedmodels,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return modelMenu(snapshot);
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+          ),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: GestureDetector(
+              onTap: onRemoveEverything,
+              child: const Icon(
+                Icons.delete_forever,
+                size: 24,
+              ),
+            ),
+          ),
         ])));
   }
 
@@ -69,8 +95,8 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     this.arSessionManager!.onInitialize(
           showFeaturePoints: false,
           showPlanes: true,
-          customPlaneTexturePath: "Images/triangle.png",
           showWorldOrigin: true,
+          handleTaps: false,
           handlePans: true,
           handleRotation: true,
         );
@@ -95,6 +121,48 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     anchors = [];
   }
 
+  ListView modelMenu(AsyncSnapshot<List<ThreeDModel>> snapshot) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(
+        vertical: 2,
+        horizontal: 20,
+      ),
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      itemBuilder: (context, index) {
+        //사용자가 보는 아이템만 빌드-> 메모리 최적화됨
+        var threedmodel = snapshot.data![index];
+        return Column(
+          children: [
+            GestureDetector(
+              onTap: () => {
+                setState(() {
+                  selected_idx = index;
+                })
+
+                //onWebObjectAtButtonPressed(),
+              },
+              child: CircleAvatar(
+                radius: 26,
+                backgroundColor: (index == selected_idx)
+                    ? const Color.fromRGBO(223, 97, 127, 1)
+                    : const Color.fromARGB(0, 0, 0, 0),
+                child: CircleAvatar(
+                    radius: 24, // MediaQuery.of(context).size.width / 9,
+                    backgroundImage:
+                        NetworkImage(threedmodel.thumb, headers: const {
+                      "User-Agent":
+                          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+                    })),
+              ),
+            )
+          ],
+        );
+      },
+      separatorBuilder: ((context, index) => const SizedBox(width: 8)),
+    );
+  }
+
   Future<void> onPlaneOrPointTapped(
       List<ARHitTestResult> hitTestResults) async {
     var singleHitTestResult = hitTestResults.firstWhere(
@@ -107,10 +175,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
       // Add note to anchor
       var newNode = ARNode(
           type: NodeType.webGLB,
-          uri: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
-          scale: v64.Vector3(0.2, 0.2, 0.2),
-          position: v64.Vector3(0.0, 0.0, 0.0),
-          rotation: v64.Vector4(1.0, 0.0, 0.0, 0.0));
+          uri:
+              "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
+          scale: Vector3(0.2, 0.2, 0.2),
+          position: Vector3(0.0, 0.0, 0.0),
+          rotation: Vector4(1.0, 0.0, 0.0, 0.0));
       bool? didAddNodeToAnchor =
           await arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
       if (didAddNodeToAnchor!) {
@@ -123,16 +192,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     }
   }
 
-  onPanStarted(String nodeName) {
-    print("Started panning node $nodeName");
-  }
+  onPanStarted(String nodeName) {}
 
-  onPanChanged(String nodeName) {
-    print("Continued panning node $nodeName");
-  }
+  onPanChanged(String nodeName) {}
 
   onPanEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended panning node $nodeName");
     final pannedNode = nodes.firstWhere((element) => element.name == nodeName);
 
     /*
@@ -142,22 +206,17 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     //pannedNode.transform = newTransform;
   }
 
-  onRotationStarted(String nodeName) {
-    print("Started rotating node $nodeName");
-  }
+  onRotationStarted(String nodeName) {}
 
-  onRotationChanged(String nodeName) {
-    print("Continued rotating node $nodeName");
-  }
+  onRotationChanged(String nodeName) {}
 
   onRotationEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended rotating node $nodeName");
     final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
 
     /*
     * Uncomment the following command if you want to keep the transformations of the Flutter representations of the nodes up to date
     * (e.g. if you intend to share the nodes through the cloud)
     */
-    rotatedNode.transform = newTransform;
+    //rotatedNode.transform = newTransform;
   }
 }

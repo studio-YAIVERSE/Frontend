@@ -14,15 +14,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<List<ThreeDModel>> threedmodels = ApiService.getThreeDModels();
+  late String username = widget.username;
 
   final Future<SharedPreferences> _id = SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
-    // Future<List<GetThreeDList>> threedList =
-    //     ApiService.getThreeDList(widget.username);
   }
 
   void removeId() async {
@@ -43,15 +41,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future<List<GetThreeDList>> threedList = ApiService.getThreeDList(username);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 2,
         actions: [
+          IconButton(
+              onPressed: () => {setState(() {})},
+              icon: const Icon(Icons.refresh)),
           IconButton(onPressed: _logOut, icon: const Icon(Icons.logout_rounded))
         ],
         backgroundColor: Colors.white,
         foregroundColor: Colors.purple,
+        centerTitle: true,
         title: const Center(
             child: Text(
           "Studio YAIVERSE",
@@ -59,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         )),
       ),
       body: FutureBuilder(
-        future: threedmodels,
+        future: threedList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
@@ -68,58 +71,63 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+                color: Color.fromRGBO(223, 97, 127, 1)),
           );
         },
       ),
     );
   }
-}
 
-GridView makeList(AsyncSnapshot<List<ThreeDModel>> snapshot) {
-  return GridView.builder(
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 3, // 1개의 행에 항목을 3개씩
-      crossAxisSpacing: 10,
-      childAspectRatio: 1 / 2,
-    ),
-    scrollDirection: Axis.vertical,
-    itemCount: snapshot.data!.length,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    itemBuilder: (context, index) {
-      var webtoon = snapshot.data![index];
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ThreeDModelViewer(file: webtoon.thumb)),
-              );
-            },
-            child: CircleAvatar(
-                radius: 60, // MediaQuery.of(context).size.width / 9,
-                backgroundImage: NetworkImage(webtoon.thumb, headers: const {
-                  "User-Agent":
-                      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                })),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            webtoon.title,
-            style: const TextStyle(
-              fontSize: 12,
+  GridView makeList(AsyncSnapshot<List<GetThreeDList>> snapshot) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3, // 1개의 행에 항목을 3개씩
+        crossAxisSpacing: 1,
+        childAspectRatio: 1,
+        mainAxisSpacing: 1,
+
+        /// 2,
+      ),
+      scrollDirection: Axis.vertical,
+      itemCount: snapshot.data!.length,
+      padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+      itemBuilder: (context, index) {
+        var models = snapshot.data![index];
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ThreeDModelViewer(
+                          username: username, name: models.name)),
+                );
+              },
+              child: ClipRect(
+                  // backgroundColor: const Color(0xffBB2649),
+                  // radius: 60, // MediaQuery.of(context).size.width / 9,
+                  child: Image.network(models.thumbnail, headers: const {
+                "User-Agent":
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+              })),
             ),
-          ),
-        ],
-      );
-    },
-    //separatorBuilder: (context, index) => const SizedBox(width: 40),
-  );
+            // const SizedBox(
+            //   height: 2,
+            // ),
+            // Text(
+            //   models.name,
+            //   style: const TextStyle(
+            //     fontSize: 12,
+            //   ),
+            // ),
+          ],
+        );
+      },
+      //separatorBuilder: (context, index) => const SizedBox(width: 40),
+    );
+  }
 }

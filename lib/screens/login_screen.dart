@@ -1,6 +1,7 @@
 // use local storage
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studio_yaiverse_mobile/services/api_service.dart';
 import 'package:studio_yaiverse_mobile/views/home_view.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _storeId(idValue) async {
-    //ApiService().registerAccount(idValue);
+    ApiService().registerAccount(idValue);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("ID", idValue);
     // TODO
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () => Navigator.of(context).pop(),
                                   child: const Text(
                                     '확인',
-                                    style: TextStyle(color: Colors.grey),
+                                    style: TextStyle(color: Color(0xffBB2649)),
                                   ),
                                 )
                               ]))
