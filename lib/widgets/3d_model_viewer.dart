@@ -16,7 +16,6 @@ class ThreeDModelViewer extends StatelessWidget {
           children: [
             ModelViewer(
               src: "http://studio-yaiverse.kro.kr/main/get/$username/$name",
-              //'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
               alt: "A 3D model of an astronaut",
               ar: false,
               autoRotate: true,

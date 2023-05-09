@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studio_yaiverse_mobile/services/api_service.dart';
 import 'package:studio_yaiverse_mobile/views/home_view.dart';
+import 'package:studio_yaiverse_mobile/widgets/3d_model_viewer.dart';
 
 class GetThreeD extends StatefulWidget {
   const GetThreeD({super.key});
@@ -87,13 +88,22 @@ class _GetThreeDState extends State<GetThreeD>
                       decoration: const BoxDecoration(color: Colors.grey),
                     )
                   else
-                    (Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(result_thumb!),
-                              fit: BoxFit.cover)),
-                      height: 224,
-                    )),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(PageRouteBuilder(
+                            fullscreenDialog: true,
+                            pageBuilder: (_, __, ___) => ThreeDModelViewer(
+                                username: _username!,
+                                name: namecontroller.text)));
+                      },
+                      child: (Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(result_thumb!),
+                                fit: BoxFit.cover)),
+                        height: 224,
+                      )),
+                    ),
                   if (result_thumb == null)
                     // TabBar
                     Container(
