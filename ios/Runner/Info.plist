@@ -49,5 +49,9 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<!-- Dongha Kim: Add camera permission -->
+    <key>NSCameraUsageDescription</key>
+    <string>To capture profile photo please grant camera access</string>
+	<!-- Dongha Kim End -->
 </dict>
 </plist>
