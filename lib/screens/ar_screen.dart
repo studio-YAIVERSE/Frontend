@@ -178,11 +178,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
   Future<void> onPlaneOrPointTapped(
       List<ARHitTestResult> hitTestResults) async {
-    if (hitTestResults.isEmpty) {
+    if (hitTestResults.isEmpty ||
+        hitTestResults
+            .where((e) => e.type == ARHitTestResultType.plane)
+            .isEmpty) {
     } else {
-      if (hitTestResults
-          .where((e) => e.type == ARHitTestResultType.plane)
-          .isEmpty) {}
       var singleHitTestResult = hitTestResults.firstWhere(
         (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane,
       );
