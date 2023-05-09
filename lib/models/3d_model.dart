@@ -15,3 +15,10 @@ class Gen3D {
         text = json['text'],
         thumbnail_uri = json['thumbnail_uri'];
 }
+
+class Toggle {
+  final toggle, thumbnail_uri;
+  Toggle.fromJson(Map<String, dynamic> json)
+      : toggle = json['toggle'],
+        thumbnail_uri = json['thumbnail_uri'];
+}

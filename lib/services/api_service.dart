@@ -21,6 +21,24 @@ class ApiService {
     return threedInstances;
   }
 
+  static Future<Toggle> gettoggle(username, name) async {
+    Toggle toggleThumb;
+    final url = Uri.parse('$Url/main/toggle_effect/$username/$name/');
+    final response = await http.get(url);
+
+    final dynamic toggleResponse = jsonDecode(response.body);
+
+    return Toggle.fromJson(toggleResponse);
+  }
+
+  static void delete(username, name) async {
+    final url = Uri.parse('$Url/$username/$name/');
+    var value = {"username": username, "name": name};
+    var data = json.encode(value);
+    final res = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: data);
+  }
+
   void registerAccount(String userId) async {
     final url = Uri.parse('$Url/accounts/register/');
     var value = {"username": userId};

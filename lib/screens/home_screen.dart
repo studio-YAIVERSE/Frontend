@@ -115,7 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ThreeDModelViewer(
-                          username: username, name: models.name)),
+                            username: username,
+                            name: models.name,
+                            isPreview: false,
+                          )),
                 );
               },
               child: ClipRect(
