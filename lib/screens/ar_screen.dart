@@ -16,14 +16,17 @@ import 'package:vector_math/vector_math_64.dart';
 //import 'dart:math';
 
 class ObjectGesturesWidget extends StatefulWidget {
-  const ObjectGesturesWidget({Key? key}) : super(key: key);
+  final String username;
+  const ObjectGesturesWidget({Key? key, required this.username})
+      : super(key: key);
   @override
   _ObjectGesturesWidgetState createState() => _ObjectGesturesWidgetState();
 }
 
 class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
-  int selected_idx = 0;
-  Future<List<ThreeDModel>> threedmodels = ApiService.getThreeDModels();
+  late String username = widget.username;
+  late int selected_idx;
+  late String model_glb;
 
   ARSessionManager? arSessionManager;
   ARObjectManager? arObjectManager;
@@ -40,9 +43,13 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Future<List<GetThreeDList>> threedmodels =
+        ApiService.getThreeDList(username);
+    selected_idx = 0;
+
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Object Transformation Gestures'),
+          title: const Text('Studio YAIVERSE AR'),
         ),
         body: Container(
             child: Stack(children: [
@@ -60,6 +67,10 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                 future: threedmodels,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return Container();
+                    }
+
                     return modelMenu(snapshot);
                   }
                   return const Center(
@@ -96,12 +107,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
           showFeaturePoints: false,
           showPlanes: true,
           showWorldOrigin: true,
-          handleTaps: false,
+          handleTaps: true,
           handlePans: true,
           handleRotation: true,
         );
     this.arObjectManager!.onInitialize();
-
     this.arSessionManager!.onPlaneOrPointTap = onPlaneOrPointTapped;
     this.arObjectManager!.onPanStart = onPanStarted;
     this.arObjectManager!.onPanChange = onPanChanged;
@@ -121,7 +131,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     anchors = [];
   }
 
-  ListView modelMenu(AsyncSnapshot<List<ThreeDModel>> snapshot) {
+  ListView modelMenu(AsyncSnapshot<List<GetThreeDList>> snapshot) {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(
         vertical: 2,
@@ -138,6 +148,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
               onTap: () => {
                 setState(() {
                   selected_idx = index;
+                  model_glb = threedmodel.file;
                 })
 
                 //onWebObjectAtButtonPressed(),
@@ -149,11 +160,13 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                     : const Color.fromARGB(0, 0, 0, 0),
                 child: CircleAvatar(
                     radius: 24, // MediaQuery.of(context).size.width / 9,
-                    backgroundImage:
-                        NetworkImage(threedmodel.thumb, headers: const {
-                      "User-Agent":
-                          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-                    })),
+                    backgroundImage: NetworkImage(
+                      threedmodel.thumbnail,
+                      headers: const {
+                        "User-Agent":
+                            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+                      },
+                    )),
               ),
             )
           ],
@@ -165,30 +178,36 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
   Future<void> onPlaneOrPointTapped(
       List<ARHitTestResult> hitTestResults) async {
-    var singleHitTestResult = hitTestResults.firstWhere(
-        (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane);
-    var newAnchor =
-        ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
-    bool? didAddAnchor = await arAnchorManager!.addAnchor(newAnchor);
-    if (didAddAnchor!) {
-      anchors.add(newAnchor);
-      // Add note to anchor
-      var newNode = ARNode(
-          type: NodeType.webGLB,
-          uri:
-              "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
-          scale: Vector3(0.2, 0.2, 0.2),
-          position: Vector3(0.0, 0.0, 0.0),
-          rotation: Vector4(1.0, 0.0, 0.0, 0.0));
-      bool? didAddNodeToAnchor =
-          await arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
-      if (didAddNodeToAnchor!) {
-        nodes.add(newNode);
-      } else {
-        arSessionManager!.onError("Adding Node to Anchor failed");
-      }
+    if (hitTestResults.isEmpty) {
     } else {
-      arSessionManager!.onError("Adding Anchor failed");
+      if (hitTestResults
+          .where((e) => e.type == ARHitTestResultType.plane)
+          .isEmpty) {}
+      var singleHitTestResult = hitTestResults.firstWhere(
+        (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane,
+      );
+      var newAnchor =
+          ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
+      bool? didAddAnchor = await arAnchorManager!.addAnchor(newAnchor);
+      if (didAddAnchor!) {
+        anchors.add(newAnchor);
+        // Add note to anchor
+        var newNode = ARNode(
+            type: NodeType.webGLB,
+            uri: model_glb,
+            scale: Vector3(0.2, 0.2, 0.2),
+            position: Vector3(0.0, 0.0, 0.0),
+            rotation: Vector4(1.0, 0.0, 0.0, 0.0));
+        bool? didAddNodeToAnchor =
+            await arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
+        if (didAddNodeToAnchor!) {
+          nodes.add(newNode);
+        } else {
+          arSessionManager!.onError("Adding Node to Anchor failed");
+        }
+      } else {
+        arSessionManager!.onError("Adding Anchor failed");
+      }
     }
   }
 

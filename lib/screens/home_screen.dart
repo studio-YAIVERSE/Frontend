@@ -47,9 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 2,
         actions: [
-          IconButton(
-              onPressed: () => {setState(() {})},
-              icon: const Icon(Icons.refresh)),
           IconButton(onPressed: _logOut, icon: const Icon(Icons.logout_rounded))
         ],
         backgroundColor: Colors.white,
@@ -61,20 +58,34 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
         )),
       ),
-      body: FutureBuilder(
-        future: threedList,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [Expanded(child: makeList(snapshot))],
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(
-                color: Color.fromRGBO(223, 97, 127, 1)),
-          );
+      body: RefreshIndicator(
+        color: const Color.fromRGBO(223, 97, 127, 1),
+        onRefresh: () async {
+          setState(() {});
         },
+        child: FutureBuilder(
+          future: threedList,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return Center(
+                    child: Column(
+                  children: const [
+                    Text("3D 모델을 만들어보세요!"),
+                  ],
+                ));
+              }
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [Expanded(child: makeList(snapshot))],
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(
+                  color: Color.fromRGBO(223, 97, 127, 1)),
+            );
+          },
+        ),
       ),
     );
   }
@@ -108,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: ClipRect(
+
                   // backgroundColor: const Color(0xffBB2649),
                   // radius: 60, // MediaQuery.of(context).size.width / 9,
                   child: Image.network(models.thumbnail, headers: const {

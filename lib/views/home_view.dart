@@ -37,7 +37,7 @@ class _StudioYaiverseHomeState extends State<StudioYaiverseHome> {
     setState(() {
       if (idx == 2) {
         Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const ObjectGesturesWidget()));
+            pageBuilder: (_, __, ___) => ObjectGesturesWidget(username: _id!)));
       } else if (idx == 1) {
         Navigator.of(context).push(PageRouteBuilder(
           fullscreenDialog: true,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studio_yaiverse_mobile/services/api_service.dart';
+import 'package:studio_yaiverse_mobile/views/home_view.dart';
 
 class GetThreeD extends StatefulWidget {
   const GetThreeD({super.key});
@@ -204,17 +205,18 @@ class _GetThreeDState extends State<GetThreeD>
                                         setState(() {
                                           loading = true;
                                         });
-                                        final imageThumbnail =
+                                        final response =
                                             await ApiService.GenThreeDbyText(
                                                 _username!,
                                                 textcontroller.text,
                                                 namecontroller.text);
-                                        print(imageThumbnail);
+                                        final imageThumbnail =
+                                            response.thumbnail_uri;
                                         setState(
                                           () {
-                                            loading = false;
                                             result_thumb =
                                                 "http://studio-yaiverse.kro.kr$imageThumbnail";
+                                            loading = false;
                                           },
                                         );
                                       }
@@ -310,30 +312,62 @@ class _GetThreeDState extends State<GetThreeD>
                       alignment: Alignment.center,
                       child: Column(children: [
                         const SizedBox(height: 32),
-                        const Center(
-                          child: CircleAvatar(
-                            radius: 42,
-                            backgroundColor: Color(0xffBB2649),
-                            child: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 54,
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StudioYaiverseHome(
+                                              title: "Studio YAIverse")),
+                                  (route) => false);
+                            },
+                            child: const CircleAvatar(
+                              radius: 42,
+                              backgroundColor: Color(0xffBB2649),
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 54,
+                              ),
                             ),
                           ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const [
-                            CircleAvatar(
-                              radius: 34,
-                              backgroundColor: Color.fromRGBO(223, 97, 127, 1),
-                              child: Icon(
-                                Icons.refresh,
-                                color: Colors.white,
-                                size: 38,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  loading = true;
+                                });
+                                final response =
+                                    await ApiService.GenThreeDbyText(
+                                        _username!,
+                                        textcontroller.text,
+                                        namecontroller.text);
+                                final imageThumbnail = response.thumbnail_uri;
+                                setState(
+                                  () {
+                                    result_thumb =
+                                        "http://studio-yaiverse.kro.kr$imageThumbnail";
+                                    loading = false;
+                                  },
+                                );
+                              },
+                              child: const CircleAvatar(
+                                radius: 34,
+                                backgroundColor:
+                                    Color.fromRGBO(223, 97, 127, 1),
+                                child: Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                  size: 38,
+                                ),
                               ),
                             ),
-                            CircleAvatar(
+                            const CircleAvatar(
                               radius: 34,
                               backgroundColor: Color.fromRGBO(223, 97, 127, 1),
                               child: Icon(
