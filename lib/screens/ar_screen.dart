@@ -42,10 +42,20 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      List<GetThreeDList> response = await ApiService.getThreeDList(username);
+      model_glb = response[0].file;
+      selected_idx = 0;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     Future<List<GetThreeDList>> threedmodels =
         ApiService.getThreeDList(username);
-    selected_idx = 0;
 
     return Scaffold(
         appBar: AppBar(
@@ -74,7 +84,9 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                     return modelMenu(snapshot);
                   }
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Color.fromRGBO(223, 97, 127, 1),
+                    ),
                   );
                 },
               ),
@@ -105,6 +117,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
     this.arSessionManager!.onInitialize(
           showFeaturePoints: false,
+          customPlaneTexturePath: "./images/triangle.png",
           showPlanes: true,
           showWorldOrigin: true,
           handleTaps: true,
@@ -150,8 +163,6 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                   selected_idx = index;
                   model_glb = threedmodel.file;
                 })
-
-                //onWebObjectAtButtonPressed(),
               },
               child: CircleAvatar(
                 radius: 26,
@@ -195,7 +206,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
         var newNode = ARNode(
             type: NodeType.webGLB,
             uri: model_glb,
-            scale: Vector3(0.2, 0.2, 0.2),
+            scale: Vector3(0.5, 0.5, 0.5),
             position: Vector3(0.0, 0.0, 0.0),
             rotation: Vector4(1.0, 0.0, 0.0, 0.0));
         bool? didAddNodeToAnchor =
