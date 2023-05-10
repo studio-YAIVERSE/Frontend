@@ -25,9 +25,8 @@ class ObjectGesturesWidget extends StatefulWidget {
 
 class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
   late String username = widget.username;
-  late int selected_idx;
+  int selected_idx = 0;
   late String model_glb;
-
   ARSessionManager? arSessionManager;
   ARObjectManager? arObjectManager;
   ARAnchorManager? arAnchorManager;
@@ -48,7 +47,6 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     Future.delayed(Duration.zero, () async {
       List<GetThreeDList> response = await ApiService.getThreeDList(username);
       model_glb = response[0].file;
-      selected_idx = 0;
     });
   }
 
