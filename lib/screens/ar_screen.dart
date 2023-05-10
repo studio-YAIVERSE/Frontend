@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
@@ -204,7 +205,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
         var newNode = ARNode(
             type: NodeType.webGLB,
             uri: model_glb,
-            scale: Vector3(0.5, 0.5, 0.5),
+            scale: Vector3(0.5, 0.5, 0.5) * (Platform.isIOS? 62.5: 1.0),
             position: Vector3(0.0, 0.0, 0.0),
             rotation: Vector4(1.0, 0.0, 0.0, 0.0));
         bool? didAddNodeToAnchor =
