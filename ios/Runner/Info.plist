@@ -52,6 +52,21 @@
 	<!-- Dongha Kim: Add camera permission -->
     <key>NSCameraUsageDescription</key>
     <string>To capture profile photo please grant camera access</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>studio-YAIVERSE.kro.kr</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                <false/>
+            </dict>
+       </dict>
+   </dict>
 	<!-- Dongha Kim End -->
 </dict>
 </plist>
