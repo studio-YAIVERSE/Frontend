@@ -2,14 +2,16 @@
 
 > 2nd YAI-Con: Studio YAIVerse Team's mobile frontend repository
 
-## Getting Dependencies: Flutter
+## Running Instructions
+
+### Getting Dependencies: Flutter
 
 * For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 * To install, follow the instructions at [link](https://flutter.dev/docs/get-started/install).
 
-## Build Instructions
+### Build Instructions
 1. Install latest version o Flutter SDK, and add Flutter to your `PATH`, refer to the link above. 
 2. Clone this repo and change directory to the repo root.
    ```bash
