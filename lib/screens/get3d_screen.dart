@@ -312,49 +312,81 @@ class _GetThreeDState extends State<GetThreeD>
                                             labelText:
                                                 'The Object Name to Save',
                                           ))),
-                                  Stack(alignment: Alignment.center, children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          image: DecorationImage(
-                                              image:
-                                                  Image.file(File(_image!.path))
-                                                      .image,
-                                              fit: BoxFit.contain)),
-                                      height: 128,
-                                    ),
-                                    Positioned(
-                                      top: 6,
-                                      left: 8,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _image = null;
-                                          });
-                                        },
-                                        child: const Icon(
-                                          Icons.cancel_sharp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey,
+                                                image: DecorationImage(
+                                                    image: Image.file(
+                                                            File(_image!.path))
+                                                        .image,
+                                                    fit: BoxFit.cover)),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .3,
+                                          ),
+                                          Positioned(
+                                            top: 6,
+                                            left: 8,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _image = null;
+                                                });
+                                              },
+                                              child: const Icon(
+                                                Icons.cancel_sharp,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                  ),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      setState(() {
-                                        is_result = true;
-                                        loading = true;
-                                      });
-                                      final response =
-                                          await ApiService.GenThreeDbyImage(
-                                              _username!,
-                                              _image!.path,
-                                              img_namecontroller.text);
+                                      if (img_namecontroller.text == "") {
+                                        showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                                    content: const Text(
+                                                        '이름을 입력해주세요!'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                        child: const Text(
+                                                          '확인',
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                  0xffBB2649)),
+                                                        ),
+                                                      )
+                                                    ]));
+                                      } else {
+                                        setState(() {
+                                          is_result = true;
+                                          loading = true;
+                                        });
+                                        final response =
+                                            await ApiService.GenThreeDbyImage(
+                                                _username!,
+                                                _image!.path,
+                                                img_namecontroller.text);
 
-                                      setState(() {
-                                        result_thumb = response.thumbnail;
-                                        loading = false;
-                                      });
+                                        setState(() {
+                                          result_thumb = response.thumbnail;
+                                          loading = false;
+                                        });
+                                      }
                                     },
                                     style: ButtonStyle(
                                         backgroundColor:
@@ -433,18 +465,12 @@ class _GetThreeDState extends State<GetThreeD>
                       ),
                       GestureDetector(
                         onTap: () async {
-                          loading
-                              ? null
-                              : setState(() {
-                                  loading = true;
-                                });
                           final response = await ApiService.gettoggle(
                               _username!, namecontroller.text);
 
                           setState(
                             () {
                               result_thumb = response.thumbnail;
-                              loading = false;
                               toggle_effect = response.toggle;
                             },
                           );

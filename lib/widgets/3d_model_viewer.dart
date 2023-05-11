@@ -45,7 +45,7 @@ class ThreeDModelViewer extends StatelessWidget {
                     ),
                   )),
             Positioned(
-                bottom: 28,
+                bottom: 16,
                 right: 80,
                 child: GestureDetector(
                   onTap: () {
@@ -83,10 +83,10 @@ class ThreeDModelViewer extends StatelessWidget {
                                 ]));
                   },
                   child: Container(
-                    margin: const EdgeInsets.all(20),
+                    //margin: const EdgeInsets.all(20),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(70),
                         border: Border.all(width: 2, color: Colors.white)),
                     child: const Text(
                       "Delete",
