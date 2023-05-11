@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:studio_yaiverse_mobile/models/3d_model.dart';
@@ -32,11 +33,18 @@ class ApiService {
   }
 
   static void delete(username, name) async {
-    final url = Uri.parse('$Url/$username/$name/');
+    final url = Uri.parse('$Url/delete/$username/$name/');
     var value = {"username": username, "name": name};
     var data = json.encode(value);
     final res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
+    print(res.body);
+    print(res.statusCode);
+    if (res.statusCode == 204) {
+      return;
+    } else {
+      throw Error;
+    }
   }
 
   void registerAccount(String userId) async {
@@ -52,12 +60,7 @@ class ApiService {
   static Future<Gen3D> GenThreeDbyText(
       String username, String text, String name) async {
     final url = Uri.parse('$Url/main/create/text/$username/');
-    var data = {
-      "name": name,
-      "description": username,
-      "text": text,
-      "thumbnail": ""
-    };
+    var data = {"name": name, "description": username, "text": text};
     var body = json.encode(data);
     try {
       final res = await http.post(url,
@@ -67,5 +70,32 @@ class ApiService {
     } catch (e) {
       throw Error;
     }
+  }
+
+  static Future<Gen3D> GenThreeDbyImage(
+      String username, String image, String name) async {
+    final imageFile = File(image);
+    List<int> imageBytes = imageFile.readAsBytesSync();
+    String base64Image = base64Encode(imageBytes);
+    final url = Uri.parse('$Url/main/create/image/$username/');
+    var data = {"name": name, "description": username, "text": base64Image};
+
+    var body = json.encode(data);
+
+    try {
+      final res = await http.post(url,
+          headers: {"Content-Type": "application/json; charset=UTF-8"},
+          body: body);
+
+      return Gen3D.fromJson(jsonDecode(res.body));
+    } catch (e) {
+      throw Error;
+    }
+    // var request = http.MultipartRequest("POST", url);
+    // final httpImg = await http.MultipartFile.fromBytes("image", image);
+    // request.files.add(httpImg);
+    // request.fields['name'] = name;
+    // request.fields['description'] = "";
+    // final res = await request.send();
   }
 }

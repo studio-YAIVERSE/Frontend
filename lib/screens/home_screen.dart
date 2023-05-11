@@ -30,13 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _logOut() {
     removeId();
-    Navigator.pushReplacement<void, void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            const StudioYaiverseHome(title: "Studio YAIverse"),
-      ),
-    );
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              const StudioYaiverseHome(title: "Studio YAIverse"),
+        ),
+        (route) => false);
   }
 
   @override

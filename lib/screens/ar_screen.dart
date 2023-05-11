@@ -47,7 +47,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     super.initState();
     Future.delayed(Duration.zero, () async {
       List<GetThreeDList> response = await ApiService.getThreeDList(username);
-      model_glb = response[0].file;
+      print(response);
+      print(response.isEmpty);
+      if (response.isNotEmpty) {
+        model_glb = response[0].file;
+      }
     });
   }
 
@@ -77,7 +81,11 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data!.isEmpty) {
-                      return Container();
+                      return const Center(
+                          child: Text(
+                        "3D 모델을 생성해주세요!",
+                        style: TextStyle(fontSize: 24),
+                      ));
                     }
 
                     return modelMenu(snapshot);
@@ -205,7 +213,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
         var newNode = ARNode(
             type: NodeType.webGLB,
             uri: model_glb,
-            scale: Vector3(0.5, 0.5, 0.5) * (Platform.isIOS? 62.5: 1.0),
+            scale: Vector3(0.5, 0.5, 0.5) * (Platform.isIOS ? 62.5 : 1.0),
             position: Vector3(0.0, 0.0, 0.0),
             rotation: Vector4(1.0, 0.0, 0.0, 0.0));
         bool? didAddNodeToAnchor =

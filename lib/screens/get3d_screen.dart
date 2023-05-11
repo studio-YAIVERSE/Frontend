@@ -340,7 +340,22 @@ class _GetThreeDState extends State<GetThreeD>
                                     ),
                                   ]),
                                   ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      setState(() {
+                                        is_result = true;
+                                        loading = true;
+                                      });
+                                      final response =
+                                          await ApiService.GenThreeDbyImage(
+                                              _username!,
+                                              _image!.path,
+                                              img_namecontroller.text);
+
+                                      setState(() {
+                                        result_thumb = response.thumbnail;
+                                        loading = false;
+                                      });
+                                    },
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(

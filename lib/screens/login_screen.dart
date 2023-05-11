@@ -16,13 +16,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login(idValue) {
     _storeId(idValue);
-    Navigator.pushReplacement<void, void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            const StudioYaiverseHome(title: "Studio YAIverse"),
-      ),
-    );
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              const StudioYaiverseHome(title: "Studio YAIverse"),
+        ),
+        (route) => false);
   }
 
   Future<void> _storeId(idValue) async {
@@ -40,60 +40,62 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: const [
-                Text(
-                  "Studio",
-                  style: TextStyle(fontSize: 48),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                    ),
+                  ),
+                )),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: idController,
+                decoration: const InputDecoration(
+                  labelText: 'ID',
                 ),
-                Text(
-                  "YAIVERSE",
-                  style: TextStyle(fontSize: 48),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              controller: idController,
-              decoration: const InputDecoration(
-                labelText: 'ID',
               ),
             ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          ElevatedButton(
-            onPressed: () => {
-              idController.text.isEmpty
-                  ? showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                              content: const Text('ID를 입력해주세요'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text(
-                                    '확인',
-                                    style: TextStyle(color: Color(0xffBB2649)),
+            const SizedBox(
+              height: 24,
+            ),
+            ElevatedButton(
+              onPressed: () => {
+                idController.text.isEmpty
+                    ? showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                                content: const Text('ID를 입력해주세요'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text(
+                                      '확인',
+                                      style:
+                                          TextStyle(color: Color(0xffBB2649)),
+                                    ),
                                   ),
-                                )
-                              ]))
-                  : _login(idController.text)
-            },
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(const Color(0xffBB2649))),
-            child: const Text("NEXT"),
-          )
-        ],
+                                ]))
+                    : _login(idController.text)
+              },
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(const Color(0xffBB2649))),
+              child: const Text("NEXT"),
+            )
+          ],
+        ),
       ),
     );
   }
