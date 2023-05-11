@@ -26,6 +26,7 @@ class _GetThreeDState extends State<GetThreeD>
   bool loading = false;
   bool is_result = false;
   bool toggle_effect = false;
+  String send_type = "text"; // text & img
   @override
   void initState() {
     _tabController = TabController(
@@ -225,6 +226,7 @@ class _GetThreeDState extends State<GetThreeD>
                                     setState(() {
                                       is_result = true;
                                       loading = true;
+                                      send_type = "text";
                                     });
                                     final response =
                                         await ApiService.GenThreeDbyText(
@@ -385,6 +387,7 @@ class _GetThreeDState extends State<GetThreeD>
                                         setState(() {
                                           result_thumb = response.thumbnail;
                                           loading = false;
+                                          send_type = "images";
                                         });
                                       }
                                     },
@@ -440,17 +443,29 @@ class _GetThreeDState extends State<GetThreeD>
                               : setState(() {
                                   loading = true;
                                 });
-                          final response = await ApiService.GenThreeDbyText(
-                              _username!,
-                              textcontroller.text,
-                              namecontroller.text);
-
-                          setState(
-                            () {
-                              result_thumb = response.thumbnail;
-                              loading = false;
-                            },
-                          );
+                          if (send_type == "text") {
+                            final response = await ApiService.GenThreeDbyText(
+                                _username!,
+                                textcontroller.text,
+                                namecontroller.text);
+                            setState(
+                              () {
+                                result_thumb = response.thumbnail;
+                                loading = false;
+                              },
+                            );
+                          } else {
+                            final response = await ApiService.GenThreeDbyImage(
+                                _username!,
+                                _image!.path,
+                                img_namecontroller.text);
+                            setState(
+                              () {
+                                result_thumb = response.thumbnail;
+                                loading = false;
+                              },
+                            );
+                          }
                         },
                         child: CircleAvatar(
                           radius: 34,
