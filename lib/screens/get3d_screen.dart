@@ -155,97 +155,99 @@ class _GetThreeDState extends State<GetThreeD>
                   controller: _tabController,
                   children: [
                     //Text Contents
-                    Container(
-                      alignment: Alignment.center,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            child: Text(
-                              "Title",
-                              textAlign: TextAlign.left,
+                    SingleChildScrollView(
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              child: Text(
+                                "Title",
+                                textAlign: TextAlign.left,
+                              ),
                             ),
-                          ),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: TextField(
-                                  controller: namecontroller,
-                                  decoration: const InputDecoration(
-                                    labelText: 'The Object Name to Save',
-                                  ))),
-                          const SizedBox(height: 10),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 8.0),
-                            child: Text(
-                              "Text Prompt",
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextField(
+                                    controller: namecontroller,
+                                    decoration: const InputDecoration(
+                                      labelText: 'The Object Name to Save',
+                                    ))),
+                            const SizedBox(height: 10),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              child: Text(
+                                "Text Prompt",
+                              ),
                             ),
-                          ),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: TextField(
-                                  controller: textcontroller,
-                                  decoration: const InputDecoration(
-                                    labelText:
-                                        'Prompt the text to generate a 3D Model',
-                                  ))),
-                          const SizedBox(
-                            height: 48,
-                          ),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (textcontroller.text == "" ||
-                                    namecontroller.text == "") {
-                                  showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                              content: const Text(
-                                                  '이름과 텍스트를 모두 입력해주세요!'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                  child: const Text(
-                                                    '확인',
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xffBB2649)),
-                                                  ),
-                                                )
-                                              ]));
-                                } else {
-                                  setState(() {
-                                    is_result = true;
-                                    loading = true;
-                                  });
-                                  final response =
-                                      await ApiService.GenThreeDbyText(
-                                          _username!,
-                                          textcontroller.text,
-                                          namecontroller.text);
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextField(
+                                    controller: textcontroller,
+                                    decoration: const InputDecoration(
+                                      labelText:
+                                          'Prompt the text to generate a 3D Model',
+                                    ))),
+                            const SizedBox(
+                              height: 48,
+                            ),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  if (textcontroller.text == "" ||
+                                      namecontroller.text == "") {
+                                    showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                                content: const Text(
+                                                    '이름과 텍스트를 모두 입력해주세요!'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                    child: const Text(
+                                                      '확인',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xffBB2649)),
+                                                    ),
+                                                  )
+                                                ]));
+                                  } else {
+                                    setState(() {
+                                      is_result = true;
+                                      loading = true;
+                                    });
+                                    final response =
+                                        await ApiService.GenThreeDbyText(
+                                            _username!,
+                                            textcontroller.text,
+                                            namecontroller.text);
 
-                                  setState(
-                                    () {
-                                      result_thumb = response.thumbnail;
-                                      loading = false;
-                                    },
-                                  );
-                                }
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      const Color(0xffBB2649))),
-                              child: const Text("Continue"),
+                                    setState(
+                                      () {
+                                        result_thumb = response.thumbnail;
+                                        loading = false;
+                                      },
+                                    );
+                                  }
+                                },
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        const Color(0xffBB2649))),
+                                child: const Text("Continue"),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
 
@@ -286,47 +288,67 @@ class _GetThreeDState extends State<GetThreeD>
                             ),
                           )
                         : Center(
-                            child: Column(
-                              children: [
-                                Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: TextField(
-                                        controller: img_namecontroller,
-                                        decoration: const InputDecoration(
-                                          labelText: 'The Object Name to Save',
-                                        ))),
-                                Stack(alignment: Alignment.center, children: [
-                                  Container(
-                                    child: Image.file(File(_image!.path)),
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    left: 0,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _image = null;
-                                        });
-                                      },
-                                      child: const Icon(
-                                        Icons.cancel_outlined,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  const Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                      ),
+                                      child: Text(
+                                        "Title",
+                                        textAlign: TextAlign.left,
                                       ),
                                     ),
                                   ),
-                                  Positioned(
-                                    bottom: 0,
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  const Color(0xffBB2649))),
-                                      child: const Text("Continue"),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      child: TextField(
+                                          controller: img_namecontroller,
+                                          decoration: const InputDecoration(
+                                            labelText:
+                                                'The Object Name to Save',
+                                          ))),
+                                  Stack(alignment: Alignment.center, children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          image: DecorationImage(
+                                              image:
+                                                  Image.file(File(_image!.path))
+                                                      .image,
+                                              fit: BoxFit.contain)),
+                                      height: 128,
                                     ),
+                                    Positioned(
+                                      top: 6,
+                                      left: 8,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _image = null;
+                                          });
+                                        },
+                                        child: const Icon(
+                                          Icons.cancel_sharp,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                const Color(0xffBB2649))),
+                                    child: const Text("Continue"),
                                   ),
-                                ]),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                   ],
