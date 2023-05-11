@@ -33,13 +33,11 @@ class ApiService {
   }
 
   static void delete(username, name) async {
-    final url = Uri.parse('$Url/delete/$username/$name/');
+    final url = Uri.parse('$Url/main/delete/$username/$name/');
     var value = {"username": username, "name": name};
     var data = json.encode(value);
     final res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    print(res.body);
-    print(res.statusCode);
     if (res.statusCode == 204) {
       return;
     } else {
@@ -78,7 +76,7 @@ class ApiService {
     List<int> imageBytes = imageFile.readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
     final url = Uri.parse('$Url/main/create/image/$username/');
-    var data = {"name": name, "description": username, "text": base64Image};
+    var data = {"name": name, "description": username, "image": base64Image};
 
     var body = json.encode(data);
 
