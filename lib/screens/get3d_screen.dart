@@ -19,6 +19,7 @@ class _GetThreeDState extends State<GetThreeD>
   late TabController _tabController;
   final textcontroller = TextEditingController();
   final namecontroller = TextEditingController();
+  final img_namecontroller = TextEditingController();
   String? _username;
   XFile? _image;
   String? result_thumb;
@@ -46,6 +47,7 @@ class _GetThreeDState extends State<GetThreeD>
   void dispose() {
     textcontroller.dispose();
     namecontroller.dispose();
+    img_namecontroller.dispose();
     super.dispose();
   }
 
@@ -231,7 +233,7 @@ class _GetThreeDState extends State<GetThreeD>
 
                                   setState(
                                     () {
-                                      result_thumb = response.thumbnail_uri;
+                                      result_thumb = response.thumbnail;
                                       loading = false;
                                     },
                                   );
@@ -284,37 +286,48 @@ class _GetThreeDState extends State<GetThreeD>
                             ),
                           )
                         : Center(
-                            child:
+                            child: Column(
+                              children: [
+                                Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: TextField(
+                                        controller: img_namecontroller,
+                                        decoration: const InputDecoration(
+                                          labelText: 'The Object Name to Save',
+                                        ))),
                                 Stack(alignment: Alignment.center, children: [
-                              Container(
-                                child: Image.file(File(_image!.path)),
-                              ),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _image = null;
-                                    });
-                                  },
-                                  child: const Icon(
-                                    Icons.cancel_outlined,
+                                  Container(
+                                    child: Image.file(File(_image!.path)),
                                   ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              const Color(0xffBB2649))),
-                                  child: const Text("Continue"),
-                                ),
-                              ),
-                            ]),
+                                  Positioned(
+                                    top: 0,
+                                    left: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _image = null;
+                                        });
+                                      },
+                                      child: const Icon(
+                                        Icons.cancel_outlined,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  const Color(0xffBB2649))),
+                                      child: const Text("Continue"),
+                                    ),
+                                  ),
+                                ]),
+                              ],
+                            ),
                           ),
                   ],
                 ),
@@ -365,7 +378,7 @@ class _GetThreeDState extends State<GetThreeD>
 
                           setState(
                             () {
-                              result_thumb = response.thumbnail_uri;
+                              result_thumb = response.thumbnail;
                               loading = false;
                             },
                           );
@@ -393,7 +406,7 @@ class _GetThreeDState extends State<GetThreeD>
 
                           setState(
                             () {
-                              result_thumb = response.thumbnail_uri;
+                              result_thumb = response.thumbnail;
                               loading = false;
                               toggle_effect = response.toggle;
                             },

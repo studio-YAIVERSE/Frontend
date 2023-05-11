@@ -8,17 +8,17 @@ class GetThreeDList {
 }
 
 class Gen3D {
-  final String name, description, text, thumbnail_uri;
+  final String name, description, text, thumbnail;
   Gen3D.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         description = json['description'],
         text = json['text'],
-        thumbnail_uri = json['thumbnail_uri'];
+        thumbnail = json['thumbnail'];
 }
 
 class Toggle {
-  final toggle, thumbnail_uri;
+  final toggle, thumbnail;
   Toggle.fromJson(Map<String, dynamic> json)
       : toggle = json['toggle'],
-        thumbnail_uri = json['thumbnail_uri'];
+        thumbnail = json['thumbnail'];
 }

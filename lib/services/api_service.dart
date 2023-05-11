@@ -51,12 +51,12 @@ class ApiService {
   //static Future<String>
   static Future<Gen3D> GenThreeDbyText(
       String username, String text, String name) async {
-    final url = Uri.parse('$Url/main/create/$username/');
+    final url = Uri.parse('$Url/main/create/text/$username/');
     var data = {
       "name": name,
       "description": username,
       "text": text,
-      "thumbnail_uri": ""
+      "thumbnail": ""
     };
     var body = json.encode(data);
     try {
