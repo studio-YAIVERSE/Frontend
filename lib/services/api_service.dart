@@ -45,7 +45,7 @@ class ApiService {
     }
   }
 
-  void registerAccount(String userId) async {
+  static void registerAccount(String userId) async {
     final url = Uri.parse('$Url/accounts/register/');
     var value = {"username": userId};
     var data = json.encode(value);

@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _storeId(idValue) async {
-    ApiService().registerAccount(idValue);
+    ApiService.registerAccount(idValue);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("ID", idValue);
     // TODO
