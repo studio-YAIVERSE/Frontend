@@ -9,7 +9,7 @@ class ApiService {
 
   static Future<List<GetThreeDList>> getThreeDList(username) async {
     List<GetThreeDList> threedInstances = [];
-    final url = Uri.parse('$Url/main/list/$username');
+    final url = Uri.parse('$Url/main/list/$username/');
     final response = await http.get(url);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -34,10 +34,10 @@ class ApiService {
 
   static void delete(username, name) async {
     final url = Uri.parse('$Url/main/delete/$username/$name/');
-    var value = {"username": username, "name": name};
-    var data = json.encode(value);
-    final res = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: data);
+    final res = await http.post(
+      url,
+    );
+    print(res.statusCode);
     if (res.statusCode == 204) {
       return;
     } else {
@@ -76,8 +76,7 @@ class ApiService {
     List<int> imageBytes = imageFile.readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
     final url = Uri.parse('$Url/main/create/image/$username/');
-    var data = {"name": name, "description": username, "image": base64Image};
-
+    var data = {"name": name, "description": "", "image": base64Image};
     var body = json.encode(data);
 
     try {
