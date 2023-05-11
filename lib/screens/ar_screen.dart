@@ -70,6 +70,17 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
             onARViewCreated: onARViewCreated,
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
+          Align(
+            alignment: const FractionalOffset(0.5, 0.8),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(255, 255, 255, 0)),
+                onPressed: onTakeScreenshot,
+                child: const Icon(
+                  Icons.circle_outlined,
+                  size: 32,
+                )),
+          ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -100,16 +111,24 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
             ),
           ),
           Positioned(
-            top: 10,
-            right: 10,
-            child: GestureDetector(
-              onTap: onRemoveEverything,
-              child: const Icon(
-                Icons.delete_forever,
-                size: 24,
-              ),
-            ),
-          ),
+              top: 10,
+              right: 10,
+              child: GestureDetector(
+                onTap: onRemoveEverything,
+                child: Container(
+                  //margin: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(70),
+                      border: Border.all(
+                          width: 2,
+                          color: const Color.fromARGB(255, 255, 255, 255))),
+                  child: const Text(
+                    "Remove",
+                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                ),
+              ))
         ])));
   }
 
@@ -149,6 +168,18 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
       arAnchorManager!.removeAnchor(anchor);
     }
     anchors = [];
+  }
+
+  Future<void> onTakeScreenshot() async {
+    var image = await arSessionManager!.snapshot();
+    await showDialog(
+        context: context,
+        builder: (_) => Dialog(
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(image: image, fit: BoxFit.cover)),
+              ),
+            ));
   }
 
   ListView modelMenu(AsyncSnapshot<List<GetThreeDList>> snapshot) {
