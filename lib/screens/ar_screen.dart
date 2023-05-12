@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'dart:io' as io show Platform;
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
@@ -11,6 +11,8 @@ import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:studio_yaiverse_mobile/models/3d_model.dart';
 import 'package:studio_yaiverse_mobile/services/api_service.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -47,8 +49,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     super.initState();
     Future.delayed(Duration.zero, () async {
       List<GetThreeDList> response = await ApiService.getThreeDList(username);
-      print(response);
-      print(response.isEmpty);
+
       if (response.isNotEmpty) {
         model_glb = response[0].file;
       }
@@ -64,23 +65,19 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
         appBar: AppBar(
           title: const Text('Studio YAIVERSE AR'),
         ),
-        body: Container(
-            child: Stack(children: [
+        body: Stack(children: [
           ARView(
             onARViewCreated: onARViewCreated,
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
           Align(
-            alignment: const FractionalOffset(0.5, 0.8),
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(255, 255, 255, 0)),
-                onPressed: onTakeScreenshot,
-                child: const Icon(
-                  Icons.circle_outlined,
-                  size: 32,
-                )),
-          ),
+              alignment: const FractionalOffset(0.5, 0.8),
+              child: GestureDetector(
+                  onTap: onTakeScreenshot,
+                  child: const Icon(
+                    Icons.circle_outlined,
+                    size: 60,
+                  ))),
           Positioned(
             bottom: 0,
             left: 0,
@@ -129,7 +126,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                   ),
                 ),
               ))
-        ])));
+        ]));
   }
 
   void onARViewCreated(
@@ -145,7 +142,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
           showFeaturePoints: false,
           customPlaneTexturePath: "./images/triangle.png",
           showPlanes: true,
-          showWorldOrigin: true,
+          showWorldOrigin: false,
           handleTaps: true,
           handlePans: true,
           handleRotation: true,
@@ -172,14 +169,65 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
   Future<void> onTakeScreenshot() async {
     var image = await arSessionManager!.snapshot();
-    await showDialog(
-        context: context,
-        builder: (_) => Dialog(
-              child: Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(image: image, fit: BoxFit.cover)),
-              ),
-            ));
+    if (context.mounted) {
+      await showDialog(
+          context: context,
+          builder: (_) => Dialog(
+                  child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        image:
+                            DecorationImage(image: image, fit: BoxFit.cover)),
+                  ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(
+                          size: 36,
+                          Icons.cancel,
+                          color: Color.fromRGBO(255, 255, 2555, 1),
+                        )),
+                  ),
+                  Align(
+                    alignment: const FractionalOffset(0.5, 0.8),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (await Permission.storage
+                            .request()
+                            .isPermanentlyDenied) {
+                          await openAppSettings();
+                        }
+
+                        final result = await ImageGallerySaver.saveImage(
+                            (image as MemoryImage).bytes);
+
+                        AlertDialog(
+                            content: const Text('저장이 완료되었습니다.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text(
+                                  '확인',
+                                  style: TextStyle(color: Color(0xffBB2649)),
+                                ),
+                              ),
+                            ]);
+                      },
+                      child: const Icon(
+                        Icons.download_for_offline,
+                        color: Color.fromRGBO(255, 255, 2555, 1),
+                        size: 60,
+                      ),
+                    ),
+                  ),
+                ],
+              )));
+    }
   }
 
   ListView modelMenu(AsyncSnapshot<List<GetThreeDList>> snapshot) {
@@ -244,7 +292,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
         var newNode = ARNode(
             type: NodeType.webGLB,
             uri: model_glb,
-            scale: Vector3(0.5, 0.5, 0.5) * (Platform.isIOS ? 62.5 : 1.0),
+            scale: Vector3(0.5, 0.5, 0.5) * (io.Platform.isIOS ? 62.5 : 1.0),
             position: Vector3(0.0, 0.0, 0.0),
             rotation: Vector4(1.0, 0.0, 0.0, 0.0));
         bool? didAddNodeToAnchor =
