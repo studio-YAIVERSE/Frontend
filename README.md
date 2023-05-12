@@ -12,7 +12,7 @@ samples, guidance on mobile development, and a full API reference.
 * To install, follow the instructions at [link](https://flutter.dev/docs/get-started/install).
 
 ### Build Instructions
-1. Install latest version o Flutter SDK, and add Flutter to your `PATH`, refer to the link above. 
+1. Install latest version of Flutter SDK, and add Flutter to your `PATH`, refer to the link above. 
 2. Clone this repo and change directory to the repo root.
    ```bash
    git clone <TBD>
