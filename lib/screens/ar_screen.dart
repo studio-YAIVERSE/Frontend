@@ -76,7 +76,8 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                   onTap: onTakeScreenshot,
                   child: const Icon(
                     Icons.circle_outlined,
-                    size: 60,
+                    size: 72,
+                    color: Color.fromRGBO(255, 255, 255, 1),
                   ))),
           Positioned(
             bottom: 0,
@@ -121,7 +122,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                           width: 2,
                           color: const Color.fromARGB(255, 255, 255, 255))),
                   child: const Text(
-                    "Remove",
+                    "Reset",
                     style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
                   ),
                 ),
@@ -173,7 +174,9 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
       await showDialog(
           context: context,
           builder: (_) => Dialog(
-                  child: Stack(
+              insetPadding: EdgeInsets.zero,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: Stack(
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -205,18 +208,6 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
 
                         final result = await ImageGallerySaver.saveImage(
                             (image as MemoryImage).bytes);
-
-                        AlertDialog(
-                            content: const Text('저장이 완료되었습니다.'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text(
-                                  '확인',
-                                  style: TextStyle(color: Color(0xffBB2649)),
-                                ),
-                              ),
-                            ]);
                       },
                       child: const Icon(
                         Icons.download_for_offline,

@@ -70,8 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
               if (snapshot.data!.isEmpty) {
                 return Center(
                     child: Column(
-                  children: const [
-                    Text("3D 모델을 만들어보세요!"),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * .4),
+                    const Text("3D 모델을 만들어보세요!"),
                   ],
                 ));
               }
