@@ -1,4 +1,20 @@
-# Studio-YAIVerse mobile Frontend
+<br>
+<p align="center"><a href="https://github.com/studio-YAIVERSE"><img width=60% src="https://raw.githubusercontent.com/studio-YAIVERSE/studio-YAIVRSE/master/assets/logo_flat.png" alt="logo"></a></p>
+<h4 align="center">
+ <a href="https://github.com/studio-YAIVERSE/studio-YAIVERSE">AI Repo</a> &nbsp;&nbsp; | &nbsp;&nbsp; <a href="https://github.com/studio-YAIVERSE/Frontend">Frontend Repo</a> &nbsp;&nbsp; | &nbsp;&nbsp; <a href="https://github.com/studio-YAIVERSE/Backend">Backend Repo</a>
+</h4>
+<br>
+
+# Studio-YAIverse mobile Frontend
+
+### "Text-guided 3D synthesis by GET3D + NADA"
+
+|                                                                                                                             |                                                                                                                                                |
+|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| <b>Car &rarr; Police</b>                                                                                                    | <b>Car &rarr; Sketch</b>                                                                                                                        |
+| ![car_policecar](https://raw.githubusercontent.com/studio-YAIVERSE/studio-YAIVRSE/master/assets/nada_car_police.gif)        | ![car_sketch](https://raw.githubusercontent.com/studio-YAIVERSE/studio-YAIVERSE/master/assets/nada_car_sketch.gif)   |
+| <b>Motorbike &rarr; Tiger</b>                                                                                               | <b>Shoe &rarr; Mossy</b>                                                                                                                        |
+| ![motorbike_tiger](https://raw.githubusercontent.com/studio-YAIVERSE/studio-YAIVRSE/master/assets/nada_motorbike_tiger.gif) | ![shoes_mossy](https://raw.githubusercontent.com/studio-YAIVERSE/studio-YAIVERSE/master/assets/nada_shoes_mossy.gif)  |
 
 > 2nd YAI-Con: Studio YAIVerse Team's mobile frontend repository
 
